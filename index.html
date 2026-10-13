@@ -55,9 +55,12 @@ button{font:inherit;color:inherit}
 .setup-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
 .setup-head h2{font-size:18px;font-weight:600;font-family:var(--body)}
 .setup-head span{font-size:13px;color:var(--muted)}
-.fields{display:grid;grid-template-columns:1fr 1fr 2fr;gap:12px}
-.fields label{display:grid;gap:4px;font-size:13px;color:var(--muted);min-width:0}
-.fields input{font:inherit;font-size:15px;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:8px;padding:8px 10px;width:100%}
+.fields{display:grid;grid-template-columns:1fr 1fr 2fr;gap:12px;align-items:start}
+.fields label{display:grid;align-content:start;gap:4px;font-size:13px;color:var(--muted);min-width:0}
+.fields input,.fields select{font:inherit;font-size:15px;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:8px;padding:8px 10px;width:100%;min-width:0}
+.unit-col{display:grid;gap:4px;font-size:13px;color:var(--muted);min-width:0}
+.unit-row{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.unit-note{font-size:12px;color:var(--muted)}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
 .chip{border:1px solid var(--rule);background:transparent;border-radius:999px;padding:4px 12px;font-size:14px;cursor:pointer}
 .chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--surface)}
@@ -144,7 +147,8 @@ footer{font-size:12px;color:var(--muted);padding-block:24px 40px}
 @media (max-width:640px){
   .wrap{padding-inline:16px}
   .fields{grid-template-columns:1fr 1fr}
-  .fields label:last-child{grid-column:1/-1}
+  .fields .unit-col{grid-column:1/-1}
+  .unit-row{grid-template-columns:1fr}
   .ctx{display:none}
   .card{padding:16px}
   .card-top{flex-direction:column;gap:6px}
@@ -173,15 +177,24 @@ footer{font-size:12px;color:var(--muted);padding-block:24px 40px}
     </div>
     <div class="fields">
       <label for="g-grade">학년
-        <input id="g-grade" list="grades" data-global="학년" autocomplete="off">
-        <datalist id="grades"><option value="중학교 1학년"><option value="중학교 2학년"><option value="중학교 3학년"></datalist>
+        <select id="g-grade" data-global="학년">
+          <option value="">학년 선택</option>
+          <option value="중학교 1학년">중학교 1학년</option>
+          <option value="중학교 2학년">중학교 2학년</option>
+          <option value="중학교 3학년">중학교 3학년</option>
+        </select>
       </label>
       <label for="g-subject">교과
         <input id="g-subject" data-global="교과" autocomplete="off">
       </label>
-      <label for="g-unit">단원·주제
-        <input id="g-unit" data-global="단원" autocomplete="off" placeholder="예: 3단원 물질의 구성">
-      </label>
+      <div class="unit-col">
+        <label for="g-unit-pick">단원·주제</label>
+        <div class="unit-row">
+          <select id="g-unit-pick"></select>
+          <input id="g-unit" data-global="단원" autocomplete="off" aria-label="단원·주제 직접 입력" placeholder="목록에 없으면 직접 입력">
+        </div>
+        <span class="unit-note" id="unit-note"></span>
+      </div>
     </div>
     <div class="chips" id="chips" role="group" aria-label="교과 선택"></div>
     <ul class="how">
@@ -227,6 +240,46 @@ footer{font-size:12px;color:var(--muted);padding-block:24px 40px}
 const GLOBALS=["학년","교과","단원"];
 const SUBJECTS=[["국어","kor"],["영어","eng"],["수학","math"],["사회","soc"],["역사","soc"],["도덕","soc"],["과학","sci"],["기술·가정","tech"],["정보","tech"],["음악","art"],["미술","art"],["체육","art"],["진로","career"],["보건","career"]];
 const GROUP_NAME={kor:"국어",eng:"영어",math:"수학",soc:"사회·역사·도덕",sci:"과학",tech:"기술·가정·정보",art:"음악·미술·체육",career:"진로·보건"};
+
+/* ---------- 학년·교과별 단원 ---------- */
+const S15="2026학년도 중3은 2015 개정 교과서 단원입니다";
+const UNITS={
+ "국어":{kind:"area",all:[["2022 개정 국어 영역",["듣기·말하기","읽기","쓰기","문법","문학","매체"]]]},
+ "영어":{kind:"area",all:[["이해",["듣기","읽기"]],["표현",["말하기","쓰기"]]]},
+ "수학":{kind:"unit",
+   1:[["1학년 1학기",["소인수분해","정수와 유리수","문자와 식","좌표평면과 그래프"]],["1학년 2학기",["기본 도형","평면도형","입체도형","통계"]]],
+   2:[["2학년 1학기",["수와 식","부등식","방정식","함수"]],["2학년 2학기",["삼각형의 성질","사각형의 성질","도형의 닮음","피타고라스 정리","확률"]]],
+   3:[["3학년 1학기",["제곱근과 실수","다항식의 곱셈과 인수분해","이차방정식","이차함수"]],["3학년 2학기",["삼각비","원의 성질","통계"]]],
+   note3:S15},
+ "사회":{kind:"unit",all:[
+   ["사회① 지리",["세계화 시대, 지리의 힘","아시아","유럽","아프리카","아메리카","오세아니아와 극지방"]],
+   ["사회① 일반사회",["인간과 사회생활","다양한 문화의 이해","민주주의와 시민","정치과정과 시민 참여","일상생활과 법","인권과 기본권"]],
+   ["사회② 일반사회",["헌법과 국가기관","경제생활과 선택","시장과 가격","우리나라 경제와 세계화","국제 사회와 한반도","사회 변동과 사회문제"]],
+   ["사회② 지리",["대한민국, 우리가 살아가는 곳","우리나라의 자연환경과 인간 생활","중부 지역","남부 지역","북부 지역","지속가능한 세계와 글로컬 시민"]]]},
+ "역사":{kind:"unit",all:[
+   ["역사① 세계사",["역사 학습의 기초","문명의 발생과 고대 세계의 형성","세계 종교의 확산과 지역 문화의 발전","지역 세계의 교류와 변화","제국주의와 국민 국가 건설 운동","세계 대전과 사회 변동","현대 세계의 전개와 변화"]],
+   ["역사② 한국사",["국가의 형성과 발전","통일 신라와 발해","고려의 성립과 변천","조선의 성립과 발전","조선 사회의 변동","근현대 사회로의 변화"]]]},
+ "도덕":{kind:"area",all:[
+   ["자신과의 관계",["자아 이해와 도덕적 삶","행복의 의미와 삶의 목적","도덕적 추론","삶의 유한성과 삶의 계획","마음의 평온","직업의 의미와 직업 윤리"]],
+   ["타인과의 관계",["가정의 도덕적 기능","친구 관계와 존중","가상공간의 도덕 문제","공감과 배려","갈등의 평화적 해결"]],
+   ["사회·공동체와의 관계",["인권 존중","차이와 다양성 존중","분단과 통일","정의로운 사회","국가와 시민","지구적 도덕 문제","과학기술과 윤리"]],
+   ["자연과의 관계",["생명 존중","환경 윤리"]]]},
+ "과학":{kind:"unit",
+   1:[["1학년",["과학과 인류의 지속가능한 삶","생물의 구성과 다양성","열","물질의 상태 변화","힘의 작용","기체의 성질","태양계"]]],
+   2:[["2학년",["물질의 특성","지권의 변화","빛과 파동","물질의 구성","식물과 에너지","동물과 에너지","전기와 자기","별과 우주"]]],
+   3:[["3학년",["화학 반응의 규칙과 에너지 변화","기권과 날씨","운동과 에너지","자극과 반응","생식과 유전","에너지 전환과 보존","별과 우주","과학기술과 인류 문명"]]],
+   note3:S15},
+ "기술·가정":{kind:"topic",all:[
+   ["가정",["청소년기 발달과 자기 관리","가족 관계와 소통","식생활과 영양","의생활","주생활","소비생활과 자원 관리"]],
+   ["기술",["기술적 문제해결과 발명","제조 기술","건설 기술","수송 기술","정보통신 기술","생명 기술","에너지와 지속가능한 기술"]]]},
+ "정보":{kind:"area",all:[["2022 개정 정보 영역",["컴퓨팅 시스템","데이터","알고리즘과 프로그래밍","인공지능","디지털 문화"]]]},
+ "음악":{kind:"area",all:[["2022 개정 음악 영역",["연주","감상","창작"]]]},
+ "미술":{kind:"area",all:[["2022 개정 미술 영역",["미적 체험","표현","감상"]]]},
+ "체육":{kind:"area",all:[["2022 개정 체육 영역",["운동","스포츠","표현"]],["주제 예시",["체력 운동과 건강 관리","영역형 스포츠(축구·농구)","네트형 스포츠(배구·배드민턴)","필드형 스포츠(티볼·야구)","표현 활동(댄스)"]]]},
+ "진로":{kind:"topic",all:[["주제 예시",["자기 이해(흥미·적성·가치관)","일과 직업 세계 이해","미래 사회와 새로운 직업","진로 탐색과 체험","고교 진학과 고교학점제","진로 계획 세우기"]]]},
+ "보건":{kind:"topic",all:[["주제 예시",["건강한 생활 습관","감염병 예방","응급처치와 심폐소생술","약물 오남용 예방","스트레스와 정신 건강","성과 건강"]]]}
+};
+const KIND_NOTE={unit:"2022 개정 교육과정 기준 · 교과서마다 단원명이 조금 다를 수 있어요",area:"교육과정 내용 영역입니다 · 교과서 단원명은 직접 입력하세요",topic:"주제 예시입니다 · 교과서 단원명은 직접 입력하세요"};
 
 /* ---------- 교과별 예시 ---------- */
 const EX={
@@ -405,7 +458,7 @@ const STAGES=[
 
 /* ---------- 상태 ---------- */
 const KEY="gnb-prompts-v1";
-let st={g:{학년:"중학교 2학년",교과:"과학",단원:"3단원 물질의 구성"},loc:{},edit:{},done:{}};
+let st={g:{학년:"중학교 2학년",교과:"과학",단원:"물질의 구성"},loc:{},edit:{},done:{}};
 try{const s=JSON.parse(localStorage.getItem(KEY)||"null");if(s&&s.g){st=Object.assign(st,s);}}catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){}}
 
@@ -419,11 +472,12 @@ function assemble(c){
   if(st.edit[c.id]!=null) return st.edit[c.id];
   return c.tpl.replace(TOK,(m,k,d)=>{const v=val(c.id,k,d).trim();return v||("["+k+"]");});
 }
-function group(){
+function subj(){
   const s=(st.g.교과||"").replace(/\s/g,"");
-  for(const [n,gk] of SUBJECTS){ if(s && (s===n.replace(/\s/g,"")||s.includes(n.split("·")[0]))) return gk; }
+  for(const [n,gk] of SUBJECTS){ if(s && (s===n.replace(/\s/g,"")||s.includes(n.split("·")[0]))) return [n,gk]; }
   return null;
 }
+function group(){ const r=subj(); return r?r[1]:null; }
 const esc=s=>s.replace(/[&<>"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
 
 /* ---------- 렌더 ---------- */
@@ -483,6 +537,7 @@ function refreshMeta(){
     d.querySelector("p").textContent=set[gk];
     d.querySelector("[data-copyex]").dataset.group=gk;
   });
+  renderUnits();
   const ctx=[st.g.학년,st.g.교과,st.g.단원].filter(Boolean).join(" · ");
   document.getElementById("ctx").textContent=ctx||"내 수업 정보를 입력하세요";
   const n=ALL.filter(c=>st.done[c.id]).length;
@@ -491,15 +546,39 @@ function refreshMeta(){
 function syncGlobal(k,v,except){
   document.querySelectorAll('[data-global="'+k+'"]').forEach(el=>{
     if(el===except) return;
-    if(el.tagName==="INPUT") el.value=v; else el.textContent=v;
+    if(el.tagName==="INPUT"||el.tagName==="SELECT") el.value=v; else el.textContent=v;
   });
 }
+const pick=document.getElementById("g-unit-pick"), unote=document.getElementById("unit-note");
+let unitKey="";
+function renderUnits(){
+  const r=subj(), gm=(st.g.학년||"").match(/([123])\s*학년/), gr=gm?gm[1]:"";
+  const key=(r?r[0]:"")+"|"+gr;
+  if(key!==unitKey){
+    unitKey=key;
+    const u=r?UNITS[r[0]]:null, groups=u?(u.all||u[gr]):null;
+    let o;
+    if(!r){ o='<option value="">교과를 먼저 고르세요</option>'; unote.textContent=""; }
+    else if(!groups){ o='<option value="">학년을 먼저 고르세요</option>'; unote.textContent=""; }
+    else{
+      o='<option value="">'+(u.kind==="unit"?"단원 고르기":"영역·주제 고르기")+'</option>'+groups.map(([label,items])=>'<optgroup label="'+esc(label)+'">'+items.map(it=>'<option value="'+esc(it)+'">'+esc(it)+'</option>').join("")+'</optgroup>').join("");
+      unote.textContent=(gr==="3"&&u.note3)?u.note3:KIND_NOTE[u.kind];
+    }
+    pick.innerHTML=o;
+  }
+  const v=(st.g.단원||"").trim();
+  pick.value=[...pick.options].some(op=>op.value===v)?v:"";
+}
+pick.addEventListener("change",()=>{
+  if(!pick.value) return;
+  st.g.단원=pick.value; syncGlobal("단원",pick.value); refreshMeta(); save();
+});
 GLOBALS.forEach(k=>syncGlobal(k,st.g[k]||""));
 refreshMeta();
 
 /* ---------- 이벤트 ---------- */
-document.querySelectorAll(".fields input").forEach(inp=>{
-  inp.addEventListener("input",()=>{const k=inp.dataset.global;st.g[k]=inp.value;syncGlobal(k,inp.value,inp);refreshMeta();save();});
+document.querySelectorAll(".fields [data-global]").forEach(inp=>{
+  inp.addEventListener(inp.tagName==="SELECT"?"change":"input",()=>{const k=inp.dataset.global;st.g[k]=inp.value;syncGlobal(k,inp.value,inp);refreshMeta();save();});
 });
 chips.addEventListener("click",e=>{
   const b=e.target.closest(".chip"); if(!b) return;
