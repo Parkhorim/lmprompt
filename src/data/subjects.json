@@ -1,0 +1,76 @@
+{
+  "subjects": [
+    {
+      "name": "국어",
+      "group": "kor"
+    },
+    {
+      "name": "영어",
+      "group": "eng"
+    },
+    {
+      "name": "수학",
+      "group": "math"
+    },
+    {
+      "name": "사회",
+      "group": "soc"
+    },
+    {
+      "name": "역사",
+      "group": "soc"
+    },
+    {
+      "name": "도덕",
+      "group": "soc"
+    },
+    {
+      "name": "과학",
+      "group": "sci"
+    },
+    {
+      "name": "기술·가정",
+      "group": "tech"
+    },
+    {
+      "name": "정보",
+      "group": "tech"
+    },
+    {
+      "name": "음악",
+      "group": "art"
+    },
+    {
+      "name": "미술",
+      "group": "art"
+    },
+    {
+      "name": "체육",
+      "group": "art"
+    },
+    {
+      "name": "진로",
+      "group": "career"
+    },
+    {
+      "name": "보건",
+      "group": "career"
+    }
+  ],
+  "groups": {
+    "kor": "국어",
+    "eng": "영어",
+    "math": "수학",
+    "soc": "사회·역사·도덕",
+    "sci": "과학",
+    "tech": "기술·가정·정보",
+    "art": "음악·미술·체육",
+    "career": "진로·보건"
+  },
+  "kindNote": {
+    "unit": "2022 개정 교육과정 기준 · 교과서마다 단원명이 조금 다를 수 있어요",
+    "area": "교육과정 내용 영역입니다 · 교과서 단원명은 직접 입력하세요",
+    "topic": "주제 예시입니다 · 교과서 단원명은 직접 입력하세요"
+  },
+  "fallbackGroup": "sci"
+}

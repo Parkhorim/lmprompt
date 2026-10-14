@@ -1,0 +1,655 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="중학교 교사 연수용 제미나이 노트북 실습 프롬프트 모음">
+<title>제미나이 노트북 실습 프롬프트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@700&family=IBM+Plex+Sans+KR:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+/* Layout: one reading column of numbered practice stages; a sticky bar keeps the class context and stage links in reach.
+   Prompt blanks are highlighter marks you click and type into. */
+:root{
+  --paper:#F4F6F7; --surface:#FFFFFF; --ink:#16242B; --muted:#5A6A72; --rule:#D9E0E3;
+  --accent:#0C6873; --accent-soft:#E0EFF0; --mark:#FFE36E; --mark-ink:#16242B;
+  --warn:#9A4A12; --warn-soft:#FBEDE2; --ok:#2F7A3E;
+  --display:"Gowun Batang", "Nanum Myeongjo", serif;
+  --body:"IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0F1719; --surface:#162124; --ink:#E4ECEE; --muted:#97A8AE; --rule:#2A383C;
+  --accent:#5CC3CC; --accent-soft:#1B3236; --mark:#5A4C12; --mark-ink:#FFF0B0;
+  --warn:#F2A877; --warn-soft:#33241A; --ok:#7CCB8A; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0F1719; --surface:#162124; --ink:#E4ECEE; --muted:#97A8AE; --rule:#2A383C;
+  --accent:#5CC3CC; --accent-soft:#1B3236; --mark:#5A4C12; --mark-ink:#FFF0B0;
+  --warn:#F2A877; --warn-soft:#33241A; --ok:#7CCB8A; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased}
+.wrap{max-width:880px;margin:0 auto;padding-inline:20px}
+h1,h2,h3{text-wrap:balance;margin:0}
+a{color:var(--accent)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* hero */
+.hero{padding-block:40px 24px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--accent)}
+.hero h1{font-family:var(--display);font-size:clamp(28px,5vw,40px);line-height:1.25;margin-top:8px}
+.hero p{color:var(--muted);margin:10px 0 0;max-width:62ch}
+.flow{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px;padding:0;list-style:none}
+.flow li{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:500}
+.flow li+li::before{content:"→";color:var(--muted)}
+.flow b{font-family:var(--mono);font-size:12px;color:var(--accent)}
+
+/* settings */
+.setup{background:var(--surface);border:1px solid var(--rule);border-radius:var(--r);padding:20px;display:grid;gap:16px}
+.setup-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.setup-head h2{font-size:18px;font-weight:600;font-family:var(--body)}
+.setup-head span{font-size:13px;color:var(--muted)}
+.fields{display:grid;grid-template-columns:1fr 1fr 2fr;gap:12px;align-items:start}
+.fields label{display:grid;align-content:start;gap:4px;font-size:13px;color:var(--muted);min-width:0}
+.fields input,.fields select{font:inherit;font-size:15px;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:8px;padding:8px 10px;width:100%;min-width:0}
+.unit-col{display:grid;gap:4px;font-size:13px;color:var(--muted);min-width:0}
+.unit-row{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.unit-note{font-size:12px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--rule);background:transparent;border-radius:999px;padding:4px 12px;font-size:14px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.how{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px;color:var(--muted);margin:0;padding:0;list-style:none}
+.how li::before{content:attr(data-n);font-family:var(--mono);color:var(--accent);margin-right:6px}
+
+/* sticky bar */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:color-mix(in srgb,var(--paper) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule);margin-top:24px}
+.bar .wrap{display:flex;align-items:center;gap:12px;padding-block:10px}
+.ctx{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:0 1 auto;max-width:40%}
+.nav{display:flex;gap:4px;overflow-x:auto;flex:1;scrollbar-width:none;min-width:0}
+.nav::-webkit-scrollbar{display:none}
+.nav a{font-size:13px;text-decoration:none;color:var(--muted);padding:4px 10px;border-radius:6px;white-space:nowrap}
+.nav a:hover{background:var(--accent-soft);color:var(--ink)}
+.nav a b{font-family:var(--mono);font-weight:500;margin-right:4px;color:var(--accent)}
+.prog{font-family:var(--mono);font-size:12px;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+
+/* sections */
+main{padding-block:8px 64px}
+.stage{padding-top:40px;scroll-margin-top:64px}
+.stage-head{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;align-items:baseline;margin-bottom:16px}
+.stage-no{font-family:var(--mono);font-size:13px;color:var(--accent);grid-row:span 2}
+.stage-head h2{font-family:var(--display);font-size:26px;line-height:1.3}
+.stage-head p{margin:0;color:var(--muted);font-size:15px;max-width:62ch}
+.tips{margin:0 0 16px;padding:14px 18px;border-radius:var(--r);background:var(--accent-soft);font-size:14px;display:grid;gap:4px}
+.tips b{font-weight:600}
+.cards{display:grid;gap:14px}
+
+/* card */
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:var(--r);padding:18px 20px;display:grid;gap:12px;scroll-margin-top:72px;min-width:0}
+.card.done{border-color:color-mix(in srgb,var(--ok) 45%,var(--rule))}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.card-top>div{min-width:0}
+.where{font-family:var(--mono);font-size:12px;color:var(--accent);letter-spacing:.02em}
+.card h3{font-size:18px;font-weight:600;margin-top:2px}
+.when{margin:0;font-size:14px;color:var(--muted)}
+.donebox{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer;white-space:nowrap;flex-shrink:0}
+.donebox input{width:18px;height:18px;accent-color:var(--ok);margin:0}
+.files{display:flex;flex-wrap:wrap;gap:6px;font-size:13px}
+.files span{border:1px dashed var(--rule);border-radius:6px;padding:2px 8px}
+.files b{font-weight:600;color:var(--muted)}
+
+.prompt{white-space:pre-wrap;word-break:keep-all;overflow-wrap:anywhere;background:var(--paper);border-radius:8px;padding:14px 16px;font-size:15.5px;line-height:1.85;min-width:0}
+.slot{background:linear-gradient(transparent 14%,var(--mark) 14%,var(--mark) 90%,transparent 90%);color:var(--mark-ink);border-bottom:1.5px dashed color-mix(in srgb,var(--mark-ink) 40%,transparent);padding:0 .2em;margin:0 .05em;cursor:text;outline:none;border-radius:2px;font-weight:500}
+.slot:focus{box-shadow:0 0 0 2px var(--accent)}
+.slot:empty::before{content:"[" attr(data-key) "]";opacity:.6}
+.slot[data-global]{border-bottom-style:solid}
+textarea.edit{width:100%;min-height:180px;font:inherit;font-size:15px;line-height:1.75;color:var(--ink);background:var(--paper);border:1px solid var(--accent);border-radius:8px;padding:12px 14px;resize:vertical}
+
+.actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{border:1px solid var(--rule);background:var(--surface);border-radius:8px;padding:7px 14px;font-size:14px;cursor:pointer;font-weight:500}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.btn.primary:hover{filter:brightness(1.08)}
+.edited{font-size:12px;font-family:var(--mono);color:var(--warn)}
+
+details{border-top:1px solid var(--rule);padding-top:10px}
+summary{cursor:pointer;font-size:14px;font-weight:600;color:var(--ink);list-style:none;display:flex;align-items:center;gap:8px}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"+";font-family:var(--mono);color:var(--accent);width:12px}
+details[open] summary::before{content:"−"}
+.sub-list{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:8px}
+.sub-list li{display:flex;gap:10px;align-items:flex-start;font-size:14.5px;background:var(--paper);border-radius:8px;padding:10px 12px}
+.sub-list li p{margin:0;flex:1;min-width:0;white-space:pre-wrap}
+.sub-list li small{display:block;font-family:var(--mono);font-size:11px;color:var(--accent);margin-bottom:2px}
+.mini{border:1px solid var(--rule);background:var(--surface);border-radius:6px;padding:3px 10px;font-size:12px;cursor:pointer;flex-shrink:0}
+.mini:hover{border-color:var(--accent)}
+.steps{margin:10px 0 0;padding-left:22px;font-size:14.5px;display:grid;gap:4px}
+.note{margin:0;font-size:14px;padding:10px 12px;border-radius:8px;background:var(--accent-soft)}
+.note.warn{background:var(--warn-soft)}
+.note b{font-weight:600;margin-right:6px}
+.note.warn b{color:var(--warn)}
+
+.closing{margin-top:48px;padding:20px;border:1px solid var(--rule);border-radius:var(--r);background:var(--surface)}
+.closing h2{font-size:18px;font-family:var(--body);font-weight:600;margin-bottom:10px}
+.closing ul{margin:0;padding-left:20px;display:grid;gap:4px;font-size:14.5px}
+.closing .reset{margin-top:14px}
+footer{font-size:12px;color:var(--muted);padding-block:24px 40px}
+
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--paper);padding:10px 18px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:10;max-width:calc(100% - 32px);text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media (prefers-reduced-motion:reduce){.toast{transition:none}}
+
+@media (max-width:640px){
+  .wrap{padding-inline:16px}
+  .fields{grid-template-columns:1fr 1fr}
+  .fields .unit-col{grid-column:1/-1}
+  .unit-row{grid-template-columns:1fr}
+  .ctx{display:none}
+  .card{padding:16px}
+  .card-top{flex-direction:column;gap:6px}
+  .stage-head h2{font-size:22px}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="eyebrow">2026 학교로 찾아가는 에듀테크 수업 역량 강화 연수 · 목포여자중학교</div>
+    <h1>제미나이 노트북 실습 프롬프트</h1>
+    <p>노란 칸만 내 수업에 맞게 고치고 복사해서 노트북에 붙여 넣으세요. 교과를 고르면 그 교과의 예시 프롬프트가 함께 나옵니다.</p>
+    <ol class="flow">
+      <li><b>1</b>소스 올리기</li>
+      <li><b>2</b>채팅으로 다듬기</li>
+      <li><b>3</b>스튜디오로 산출물 만들기</li>
+    </ol>
+  </header>
+
+  <section class="setup" aria-labelledby="setup-title">
+    <div class="setup-head">
+      <h2 id="setup-title">내 수업 정보</h2>
+      <span>여기에 적은 값이 모든 프롬프트의 노란 칸에 한꺼번에 들어갑니다</span>
+    </div>
+    <div class="fields">
+      <label for="g-grade">학년
+        <select id="g-grade" data-global="학년">
+          <option value="">학년 선택</option>
+          <option value="중학교 1학년">중학교 1학년</option>
+          <option value="중학교 2학년">중학교 2학년</option>
+          <option value="중학교 3학년">중학교 3학년</option>
+        </select>
+      </label>
+      <label for="g-subject">교과
+        <input id="g-subject" data-global="교과" autocomplete="off">
+      </label>
+      <div class="unit-col">
+        <label for="g-unit-pick">단원·주제</label>
+        <div class="unit-row">
+          <select id="g-unit-pick"></select>
+          <input id="g-unit" data-global="단원" autocomplete="off" aria-label="단원·주제 직접 입력" placeholder="목록에 없으면 직접 입력">
+        </div>
+        <span class="unit-note" id="unit-note"></span>
+      </div>
+    </div>
+    <div class="chips" id="chips" role="group" aria-label="교과 선택"></div>
+    <ul class="how">
+      <li data-n="①">노란 칸을 눌러 바로 고치기</li>
+      <li data-n="②">복사 → 노트북 채팅창이나 맞춤설정에 붙여넣기</li>
+      <li data-n="③">끝낸 실습은 완료 체크</li>
+    </ul>
+  </section>
+</div>
+
+<div class="bar">
+  <div class="wrap">
+    <span class="ctx" id="ctx"></span>
+    <nav class="nav" id="nav" aria-label="실습 단계"></nav>
+    <span class="prog" id="prog"></span>
+  </div>
+</div>
+
+<main class="wrap" id="main"></main>
+
+<div class="wrap">
+  <section class="closing">
+    <h2>학생과 함께 쓰기 전에</h2>
+    <ul>
+      <li><b>개인정보</b> 학생 이름·성적·상담 기록이 담긴 문서는 소스로 올리지 않습니다.</li>
+      <li><b>원문 대조</b> 정답·해설·수치·성취기준 코드는 인용 번호를 눌러 원문과 맞춰 봅니다.</li>
+      <li><b>저작권</b> 교과서와 출판물은 수업 목적 범위 안에서만 씁니다.</li>
+    </ul>
+    <button class="btn reset" id="reset" type="button">입력한 내용 모두 지우기</button>
+    <span id="reset-confirm" hidden>
+      <button class="btn" id="reset-yes" type="button">지우기</button>
+      <button class="btn" id="reset-no" type="button">취소</button>
+    </span>
+  </section>
+  <footer>2026. 10. 14. 연수 자료(실습 프롬프트 예시)를 범교과용으로 다시 구성함 · 입력한 내용은 이 브라우저에만 저장됩니다</footer>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+"use strict";
+const GLOBALS=["학년","교과","단원"];
+const SUBJECTS=[["국어","kor"],["영어","eng"],["수학","math"],["사회","soc"],["역사","soc"],["도덕","soc"],["과학","sci"],["기술·가정","tech"],["정보","tech"],["음악","art"],["미술","art"],["체육","art"],["진로","career"],["보건","career"]];
+const GROUP_NAME={kor:"국어",eng:"영어",math:"수학",soc:"사회·역사·도덕",sci:"과학",tech:"기술·가정·정보",art:"음악·미술·체육",career:"진로·보건"};
+
+/* ---------- 학년·교과별 단원 ---------- */
+const S15="2026학년도 중3은 2015 개정 교과서 단원입니다";
+const UNITS={
+ "국어":{kind:"area",all:[["2022 개정 국어 영역",["듣기·말하기","읽기","쓰기","문법","문학","매체"]]]},
+ "영어":{kind:"area",all:[["이해",["듣기","읽기"]],["표현",["말하기","쓰기"]]]},
+ "수학":{kind:"unit",
+   1:[["1학년 1학기",["소인수분해","정수와 유리수","문자와 식","좌표평면과 그래프"]],["1학년 2학기",["기본 도형","평면도형","입체도형","통계"]]],
+   2:[["2학년 1학기",["수와 식","부등식","방정식","함수"]],["2학년 2학기",["삼각형의 성질","사각형의 성질","도형의 닮음","피타고라스 정리","확률"]]],
+   3:[["3학년 1학기",["제곱근과 실수","다항식의 곱셈과 인수분해","이차방정식","이차함수"]],["3학년 2학기",["삼각비","원의 성질","통계"]]],
+   note3:S15},
+ "사회":{kind:"unit",all:[
+   ["사회① 지리",["세계화 시대, 지리의 힘","아시아","유럽","아프리카","아메리카","오세아니아와 극지방"]],
+   ["사회① 일반사회",["인간과 사회생활","다양한 문화의 이해","민주주의와 시민","정치과정과 시민 참여","일상생활과 법","인권과 기본권"]],
+   ["사회② 일반사회",["헌법과 국가기관","경제생활과 선택","시장과 가격","우리나라 경제와 세계화","국제 사회와 한반도","사회 변동과 사회문제"]],
+   ["사회② 지리",["대한민국, 우리가 살아가는 곳","우리나라의 자연환경과 인간 생활","중부 지역","남부 지역","북부 지역","지속가능한 세계와 글로컬 시민"]]]},
+ "역사":{kind:"unit",all:[
+   ["역사① 세계사",["역사 학습의 기초","문명의 발생과 고대 세계의 형성","세계 종교의 확산과 지역 문화의 발전","지역 세계의 교류와 변화","제국주의와 국민 국가 건설 운동","세계 대전과 사회 변동","현대 세계의 전개와 변화"]],
+   ["역사② 한국사",["국가의 형성과 발전","통일 신라와 발해","고려의 성립과 변천","조선의 성립과 발전","조선 사회의 변동","근현대 사회로의 변화"]]]},
+ "도덕":{kind:"area",all:[
+   ["자신과의 관계",["자아 이해와 도덕적 삶","행복의 의미와 삶의 목적","도덕적 추론","삶의 유한성과 삶의 계획","마음의 평온","직업의 의미와 직업 윤리"]],
+   ["타인과의 관계",["가정의 도덕적 기능","친구 관계와 존중","가상공간의 도덕 문제","공감과 배려","갈등의 평화적 해결"]],
+   ["사회·공동체와의 관계",["인권 존중","차이와 다양성 존중","분단과 통일","정의로운 사회","국가와 시민","지구적 도덕 문제","과학기술과 윤리"]],
+   ["자연과의 관계",["생명 존중","환경 윤리"]]]},
+ "과학":{kind:"unit",
+   1:[["1학년",["과학과 인류의 지속가능한 삶","생물의 구성과 다양성","열","물질의 상태 변화","힘의 작용","기체의 성질","태양계"]]],
+   2:[["2학년",["물질의 특성","지권의 변화","빛과 파동","물질의 구성","식물과 에너지","동물과 에너지","전기와 자기","별과 우주"]]],
+   3:[["3학년",["화학 반응의 규칙과 에너지 변화","기권과 날씨","운동과 에너지","자극과 반응","생식과 유전","에너지 전환과 보존","별과 우주","과학기술과 인류 문명"]]],
+   note3:S15},
+ "기술·가정":{kind:"topic",all:[
+   ["가정",["청소년기 발달과 자기 관리","가족 관계와 소통","식생활과 영양","의생활","주생활","소비생활과 자원 관리"]],
+   ["기술",["기술적 문제해결과 발명","제조 기술","건설 기술","수송 기술","정보통신 기술","생명 기술","에너지와 지속가능한 기술"]]]},
+ "정보":{kind:"area",all:[["2022 개정 정보 영역",["컴퓨팅 시스템","데이터","알고리즘과 프로그래밍","인공지능","디지털 문화"]]]},
+ "음악":{kind:"area",all:[["2022 개정 음악 영역",["연주","감상","창작"]]]},
+ "미술":{kind:"area",all:[["2022 개정 미술 영역",["미적 체험","표현","감상"]]]},
+ "체육":{kind:"area",all:[["2022 개정 체육 영역",["운동","스포츠","표현"]],["주제 예시",["체력 운동과 건강 관리","영역형 스포츠(축구·농구)","네트형 스포츠(배구·배드민턴)","필드형 스포츠(티볼·야구)","표현 활동(댄스)"]]]},
+ "진로":{kind:"topic",all:[["주제 예시",["자기 이해(흥미·적성·가치관)","일과 직업 세계 이해","미래 사회와 새로운 직업","진로 탐색과 체험","고교 진학과 고교학점제","진로 계획 세우기"]]]},
+ "보건":{kind:"topic",all:[["주제 예시",["건강한 생활 습관","감염병 예방","응급처치와 심폐소생술","약물 오남용 예방","스트레스와 정신 건강","성과 건강"]]]}
+};
+const KIND_NOTE={unit:"2022 개정 교육과정 기준 · 교과서마다 단원명이 조금 다를 수 있어요",area:"교육과정 내용 영역입니다 · 교과서 단원명은 직접 입력하세요",topic:"주제 예시입니다 · 교과서 단원명은 직접 입력하세요"};
+
+/* ---------- 교과별 예시 ---------- */
+const EX={
+mindmap:{
+ kor:"소스의 소설에서 인물 관계와 갈등 구조만 마인드맵으로 정리해 줘.",
+ eng:"본문의 핵심 표현을 의사소통 기능(요청하기, 제안하기, 의견 묻기)별로 묶어 마인드맵을 만들어 줘.",
+ math:"일차함수 단원의 개념(정의, 그래프, 기울기, 활용)이 서로 어떻게 연결되는지 마인드맵으로 보여 줘.",
+ soc:"조선 후기 사회 변화를 정치·경제·사회·문화 네 갈래로 나눠 마인드맵을 만들어 줘.",
+ sci:"물질의 구성 단원을 원소·원자·분자·이온 개념 중심으로 마인드맵을 만들어 줘.",
+ tech:"알고리즘과 프로그래밍 단원을 순차·선택·반복 구조 중심으로 마인드맵을 만들어 줘.",
+ art:"소스의 서양 음악사 자료를 시대별 대표 작곡가와 음악적 특징으로 마인드맵을 만들어 줘.",
+ career:"소스의 직업 자료를 흥미 유형별로 묶어 마인드맵을 만들어 줘."},
+audio:{
+ kor:"중학교 3학년이 듣는다고 가정하고, 이 소설의 갈등 구조와 인물 관계를 8분 이내로 설명해 줘. 결말은 밝히지 말고 궁금증이 남게 마무리해 줘.",
+ eng:"본문 지문의 줄거리와 핵심 표현 5개를 두 진행자가 우리말로 대화하며 소개해 줘. 표현이 나올 때마다 영어 문장을 천천히 한 번 읽어 줘.",
+ math:"피타고라스 정리가 생활 속 어디에 쓰이는지 두 진행자가 서로 퀴즈를 내며 이야기하는 5분 오디오로 만들어 줘. 식은 말로 쉽게 풀어 설명해 줘.",
+ soc:"소스의 지역 인구 자료를 바탕으로, 우리 지역 인구 변화의 원인을 두 사람이 서로 다른 관점에서 이야기하는 형식으로 만들어 줘.",
+ sci:"세포 단원을 두 진행자가 '세포는 작은 도시'라는 비유로 설명하는 6분 오디오로 만들어 줘. 세포 소기관마다 도시의 어떤 시설인지 짝지어 줘.",
+ tech:"청소년의 영양과 식사 구성 내용을 아침을 자주 거르는 학생의 고민 상담 형식으로 5분 오디오로 만들어 줘.",
+ art:"소스의 작품 감상 자료로, 두 진행자가 그림을 처음 본 관람객처럼 보이는 것과 느낌을 주고받는 5분 오디오를 만들어 줘.",
+ career:"학부모 안내용으로 고교학점제의 핵심을 질문과 답 형식으로 7분 이내 오디오로 만들어 줘."},
+video:{
+ kor:"소스의 논설문 단원에서 주장과 근거를 찾는 방법만 골라 4분 도입 영상으로 만들어 줘. 예시 문장은 화면에 글자로 보여 줘.",
+ eng:"본문 대화문의 상황을 장면별로 나눠 3분 영상으로 만들어 줘. 핵심 표현은 영어와 우리말을 함께 화면에 띄워 줘.",
+ math:"일차방정식의 풀이 절차를 단계별로 보여 주는 4분 영상으로 만들어 줘. 단계마다 식이 어떻게 바뀌는지 화면에 크게 표시해 줘.",
+ soc:"소스의 기후 자료로 세계 기후 분포를 소개하는 5분 영상을 만들어 줘. 기후 그래프를 화면에 포함해 줘.",
+ sci:"소스의 생물의 다양성 단원을 중학교 1학년 대상 도입 영상으로 만들어 줘. 5분 이내로 하고, 실험 결과 그래프를 화면에 포함해 줘.",
+ tech:"조리 실습 안전 수칙 부분만 골라 3분짜리 안내 영상으로 만들어 줘. 실습 직전에 틀 자료이므로 지켜야 할 행동 위주로 구성해 줘.",
+ art:"소스의 체육 안전 수칙 중 준비 운동과 부상 예방 부분만 골라 3분 영상으로 만들어 줘. 동작 순서대로 구성해 줘.",
+ career:"응급처치 자료 중 심폐소생술 순서만 골라 3분 안내 영상으로 만들어 줘. 단계 번호를 화면에 크게 띄워 줘."},
+flash:{
+ kor:"문법 단원의 품사 용어로 플래시카드 20장을 만들어 줘. 앞면은 용어, 뒷면은 뜻과 예문 한 개로 해 줘.",
+ eng:"본문에 나온 단어와 숙어로 플래시카드 30장을 만들어 줘. 앞면은 영어 표현, 뒷면은 뜻과 예문 한 문장으로 해 줘.",
+ math:"도형 단원의 용어와 성질로 플래시카드 15장을 만들어 줘. 앞면은 용어, 뒷면은 정의와 그림을 말로 설명한 한 줄로 해 줘.",
+ soc:"이 단원의 주요 사건으로 플래시카드 20장을 만들어 줘. 앞면은 사건 이름, 뒷면은 시기와 결과 한 문장으로 해 줘.",
+ sci:"주기율표 1~20번 원소로 플래시카드 20장을 만들어 줘. 앞면은 원소 기호, 뒷면은 원소 이름과 생활 속 쓰임 한 가지로 해 줘.",
+ tech:"정보 단원 용어(알고리즘, 변수, 조건, 반복 등)로 플래시카드 15장을 만들어 줘. 뒷면은 생활 속 비유로 설명해 줘.",
+ art:"음악 용어(빠르기말, 셈여림표)로 플래시카드 20장을 만들어 줘. 앞면은 기호나 용어, 뒷면은 읽는 법과 뜻으로 해 줘.",
+ career:"직업 이름으로 플래시카드 20장을 만들어 줘. 앞면은 직업, 뒷면은 하는 일과 관련 교과로 해 줘."},
+quiz:{
+ kor:"이 작품으로 퀴즈 10문항을 만들어 줘. 인물의 심리와 서술 방식을 묻고, 해설에는 근거가 되는 본문 문장을 넣어 줘.",
+ eng:"본문 독해 퀴즈 10문항을 만들어 줘. 세부 내용 6문항, 어휘 2문항, 주제 2문항으로 하고 해설은 우리말로 써 줘.",
+ math:"이 단원의 개념 확인 퀴즈 8문항을 만들어 줘. 계산 실수가 아니라 개념을 잘못 이해했을 때 고를 답을 오답 선택지로 넣어 줘.",
+ soc:"지도와 통계 자료를 읽어야 풀 수 있는 퀴즈 10문항을 만들어 줘. 자료의 어느 부분을 봐야 하는지 해설에 적어 줘.",
+ sci:"이 단원으로 퀴즈 10문항을 만들어 줘. 학생들이 자주 갖는 오개념을 오답 선택지에 반영하고, 문항마다 해설을 붙여 줘.",
+ tech:"정보보호와 저작권 퀴즈 10문항을 만들어 줘. 학교생활에서 실제로 생길 수 있는 상황을 문제로 써 줘.",
+ art:"경기 규칙 퀴즈 10문항을 만들어 줘. 실제 경기 상황을 제시하고 올바른 판정을 고르게 해 줘.",
+ career:"감염병 예방 수칙 퀴즈 10문항을 만들어 줘. 잘못 알려진 건강 상식을 오답 선택지에 넣어 줘."},
+slides:{
+ kor:"시 단원 수업용 슬라이드를 10장 이내로 만들어 줘. 시 낭독, 시어 풀이, 표현법 찾기, 감상 질문 순서로 구성해 줘.",
+ eng:"새 단원 도입 슬라이드 8장을 만들어 줘. 주제와 관련된 질문, 핵심 표현, 짝 대화 연습 순서로 구성해 줘.",
+ math:"이 단원의 개념 설명 슬라이드를 만들어 줘. 개념 한 장, 예제 풀이 두 장, 학생 연습 문제 한 장 순서를 세 번 반복하는 구조로 해 줘.",
+ soc:"이 단원 수업용 슬라이드 10장을 만들어 줘. 장마다 자료나 사료 한 개와 탐구 질문 하나를 넣어 줘.",
+ sci:"실험 수업 슬라이드 8장을 만들어 줘. 탐구 문제, 가설, 준비물, 실험 과정, 결과 정리 표, 결론 질문 순서로 구성해 줘.",
+ tech:"프로젝트 수업 안내 슬라이드 8장을 만들어 줘. 목표, 일정, 모둠 역할, 평가 기준, 제출 방법 순서로 구성해 줘.",
+ art:"미술 감상 수업 슬라이드 10장을 만들어 줘. 작품마다 '보이는 것 – 느낌 – 생각' 질문을 하나씩 넣어 줘.",
+ career:"진로 탐색 수업 슬라이드 10장을 만들어 줘. 장마다 활동 질문 하나와 학생이 활동지에 적을 내용을 안내해 줘."},
+info:{
+ kor:"토론 절차(입론 – 반론 – 최종 발언)를 흐름도 인포그래픽 한 장으로 만들어 줘. 단계마다 발언 시간과 할 일을 적어 줘.",
+ eng:"영어 문장의 5형식을 형식마다 예문 한 개와 함께 한 장 인포그래픽으로 만들어 줘.",
+ math:"다각형의 내각의 합을 구하는 과정을 삼각형으로 나누는 그림과 함께 단계별 인포그래픽으로 만들어 줘.",
+ soc:"선거의 4대 원칙을 그림 위주의 교실 게시용 인포그래픽 한 장으로 만들어 줘.",
+ sci:"물의 순환 과정을 화살표 흐름도 인포그래픽으로 만들어 줘. 단계마다 상태 변화 이름을 적어 줘.",
+ tech:"가정 내 전기 안전 수칙 5가지를 교실 게시용 인포그래픽으로 만들어 줘. 그림 위주로 구성해 줘.",
+ art:"줄넘기 기술을 난이도 순서대로 보여 주는 단계별 인포그래픽을 만들어 줘.",
+ career:"이 직업군의 진출 경로를 한눈에 보이는 흐름도 형태로 만들어 줘. 학년별로 준비할 내용을 단계로 표시해 줘."},
+report:{
+ kor:"이 작품의 학습 가이드를 만들어 줘. 작가 소개, 줄거리, 인물 관계, 생각해 볼 질문 5개 순서로 구성해 줘.",
+ eng:"본문 지문의 주요 표현을 정리한 학습지를 만들어 줘. 표현, 뜻, 예문, 우리말 해석 순으로 표에 담아 줘.",
+ math:"이 단원 학습 가이드를 만들어 줘. 핵심 공식, 대표 예제 풀이 2개, 자주 하는 실수 3가지 순서로 구성해 줘.",
+ soc:"브리핑 문서로 만들어 줘. 이 단원의 쟁점 3가지와 쟁점마다 찬성·반대 근거를 표로 정리해 줘.",
+ sci:"학생용 실험 보고서 틀을 만들어 줘. 탐구 문제, 가설, 변인 통제, 결과 표, 결론 칸을 넣어 줘.",
+ tech:"실습 준비물 안내 가정통신문을 만들어 줘. 항목마다 세 문장 이내로 쓰고, 준비물은 표로 정리해 줘.",
+ art:"체육대회 경기 규칙 안내문을 자주 묻는 질문 형식으로 8개 항목 만들어 줘.",
+ career:"학부모가 읽을 안내문으로 만들어 줘. 자주 묻는 질문 형식으로 8개 항목, 각 답변은 세 문장 이내로 써 줘."},
+sim:{
+ kor:"중학교 1학년 국어 수업용 '문장 성분 찾기' 웹앱을 단일 HTML 파일로 만들어 줘. 문장을 보여 주고 단어를 눌러 주어·서술어·목적어를 고르면 바로 정답 여부를 알려 줘.",
+ eng:"단어 뜻 맞히기 카드 게임을 단일 HTML 파일로 만들어 줘. 본문 단어 20개를 넣고, 카드를 뒤집어 뜻을 고르면 맞힌 개수를 화면에 표시해 줘.",
+ math:"일차함수 y = ax + b 그래프 시뮬레이터를 단일 HTML 파일로 만들어 줘. a와 b를 슬라이더로 조절하면 그래프가 실시간으로 바뀌고, 기울기와 y절편을 화면에 숫자로 표시해 줘.",
+ soc:"인구 피라미드 시뮬레이터를 단일 HTML 파일로 만들어 줘. 출생률과 기대수명을 슬라이더로 바꾸면 30년 뒤 인구 구조가 막대그래프로 바뀌어 보이게 해 줘.",
+ sci:"너는 유능한 웹 개발자야. 중학생 과학 수업을 위한 자유낙하 시뮬레이션을 단일 HTML 파일로 만들어 줘. 높이와 중력을 조절하는 슬라이더를 넣고, 결과는 실시간으로 움직이는 공으로 보여 줘.",
+ tech:"가정 전기 요금 계산기를 단일 HTML 파일로 만들어 줘. 가전제품별 소비전력과 하루 사용 시간을 입력하면 한 달 전력량과 예상 요금을 표와 막대그래프로 보여 줘.",
+ art:"박자 연습용 메트로놈을 단일 HTML 파일로 만들어 줘. 빠르기(BPM)를 슬라이더로 조절하고, 2/4·3/4·4/4박자의 강박을 소리와 불빛으로 구분해 줘.",
+ career:"운동 강도 계산기를 단일 HTML 파일로 만들어 줘. 나이와 안정 시 심박수를 넣으면 목표 심박수 구간을 계산해 색깔 막대로 보여 줘."}
+};
+
+/* ---------- 실습 단계와 프롬프트 ---------- */
+const STAGES=[
+{id:"s1",no:"1",title:"노트북 준비",desc:"단원 하나의 서재를 만들고, 노트북이 소스 안에서만 답하는지 확인합니다.",
+ tips:["<b>이름</b> '과목명 + 단원명' (예: 과학 3단원 물질의 구성)","<b>소스</b> 교과서 단원 PDF, 성취기준이 들어간 교육과정 문서, 단원 관련 유튜브 링크 등 3~5개가 적당합니다","<b>산출물을 만들 때</b> 필요한 소스만 체크합니다"],
+ cards:[
+ {id:"summary",where:"채팅",title:"핵심 개념 요약",when:"소스를 올린 직후, 노트북이 내용을 제대로 읽었는지 확인할 때",
+  tpl:"이 단원의 핵심 개념을 {학년} 눈높이로 {개수=5}개 이내로 요약해 줘. 개념마다 근거가 된 소스 위치를 인용 번호로 표시해 줘.",
+  note:["참고","답변의 인용 번호를 눌러 원문과 대조해 보세요."]},
+ {id:"ground",where:"채팅",title:"그라운딩 확인",when:"소스에 없는 질문을 일부러 던져서 지어내지 않는지 확인할 때",
+  tpl:"{소스 밖 질문=가장 최근 개봉한 영화 순위를 알려 줘.}",
+  note:["참고","'소스에서 찾을 수 없다'는 답이 나오면 정상입니다. 그럴듯하게 지어낸다면 아래 맞춤 지침을 넣고 다시 물어보세요."]},
+ {id:"guide",where:"노트북 › 메뉴 › 지침  ·  NotebookLM은 채팅 › 대화 맞춤설정",title:"노트북 맞춤 지침",when:"한 번 넣어 두면 이 노트북의 모든 답변에 적용됩니다",
+  tpl:"너는 {학년} {교과} 수업을 준비하는 교사의 조력자다.\n- 추가한 소스에만 근거해서 답하고, 소스에서 확인할 수 없는 내용은 '소스에서 확인할 수 없음'이라고 쓴다.\n- {학년}이 이해할 수 있는 쉬운 말을 쓰고, 전문 용어는 처음 나올 때 풀어 설명한다.\n- 답변은 개조식으로 쓰고, 비교가 필요하면 표를 쓴다."}
+ ]},
+{id:"s2",no:"2",title:"스튜디오 산출물",desc:"스튜디오 각 버튼의 연필(맞춤설정) 아이콘을 누르고 아래 프롬프트를 붙여 넣습니다.",
+ cards:[
+ {id:"mindmap",ex:"mindmap",where:"스튜디오 › 마인드맵  ·  또는 채팅",title:"마인드맵",when:"단원 도입에서 전체 구조를 보여 주거나, 정리 단계에서 개념 관계를 확인할 때",
+  tpl:"{단원}에서 {범위=핵심 개념} 부분만 마인드맵으로 정리해 줘.",
+  refine:[["단원 전체로","단원 전체의 마인드맵을 만들어 줘."]],
+  note:["참고","마인드맵 항목을 누르면 그 항목에 대한 설명이 채팅창에 이어집니다."]},
+ {id:"audio",ex:"audio",where:"스튜디오 › 오디오 개요 › 맞춤설정",title:"오디오 개요",when:"결석생 보충, 예습·복습 과제, 등하굣길에 듣는 자료, 학부모 안내용 요약",
+  tpl:"{단원} 수업에 결석한 {학년} 학생 한 명을 위한 {분량=10}분짜리 오디오를 만들어 줘. 이번 주 진도의 핵심 두 가지와 다음 시간까지 준비해 올 것 한 가지를 진행자 두 명이 대화로 알려 주는 형식으로 해 줘.",
+  refine:[["용어 풀기","전문 용어가 나올 때마다 바로 쉬운 말로 풀어 설명해 줘."],["마무리","마지막 1분은 오늘 내용을 세 문장으로 다시 정리해 줘."]],
+  note:["유의","생성에 몇 분이 걸립니다. 먼저 생성 버튼을 누르고 다른 실습을 하다가 돌아와 확인하세요."],warn:true},
+ {id:"video",ex:"video",where:"스튜디오 › 동영상 개요 › 맞춤설정",title:"동영상 개요",when:"개념 도입 영상, 결시생 보충, 거꾸로 수업의 사전 시청 자료",
+  tpl:"소스의 {단원} 내용을 {학년} 대상 도입 영상으로 만들어 줘. {분량=5}분 이내로 하고, 소스에 있는 그림이나 그래프를 화면에 포함해 줘.",
+  refine:[["속도 조절","말하는 속도를 조금 늦추고, 핵심 용어는 화면에 글자로도 띄워 줘."]],
+  note:["참고","교사가 같은 설명을 반복해야 하는 상황에서 효과가 가장 큽니다."]},
+ {id:"flash",ex:"flash",where:"스튜디오 › 플래시카드 › 맞춤설정",title:"플래시카드",when:"용어 암기, 전시 학습 확인, 짝 활동",
+  tpl:"소스의 {단원} 핵심 용어로 플래시카드 {개수=20}장을 만들어 줘. 앞면은 용어, 뒷면은 {학년}이 이해할 수 있는 뜻 한 문장과 예시 한 개로 해 줘.",
+  refine:[["헷갈리는 용어","헷갈리기 쉬운 용어끼리는 뒷면에 차이점을 한 줄 덧붙여 줘."]],
+  note:["참고","카드에서 '설명'을 누르면 소스를 근거로 한 설명을 받을 수 있습니다."]},
+ {id:"quiz",ex:"quiz",where:"스튜디오 › 퀴즈 › 맞춤설정",title:"퀴즈",when:"수업 마무리 형성평가, 자기 점검, 자율학습 자료",
+  tpl:"{단원}으로 퀴즈 {개수=10}문항을 만들어 줘. 학생들이 자주 갖는 오개념을 오답 선택지에 반영하고, 문항마다 해설을 붙여 줘.",
+  refine:[["난이도 올리기","너무 쉬운 문항 3개를 적용 수준으로 바꿔 줘."]],
+  note:["유의","생성된 문항은 초안입니다. 정답·해설은 인용 번호로 원문과 대조하고, 지필평가 문항으로 그대로 옮기지 않습니다."],warn:true},
+ {id:"slides",ex:"slides",where:"스튜디오 › 슬라이드 자료 › 맞춤설정",title:"수업용 슬라이드",when:"판서 대체 자료, 협의회 발표 자료, 학생 발표 과제의 예시",
+  tpl:"{단원}의 수업용 슬라이드를 {장수=10}장 이내로 만들어 줘. 각 장은 제목과 핵심 문장 3개 이내로 하고, 마지막에 정리 질문 슬라이드를 넣어 줘.",
+  refine:[["글자 줄이기","글자가 너무 많으니 3장부터 7장까지 문장을 짧게 줄여 줘."]],
+  note:["참고","완성본이 아니라 구조가 잡힌 초안입니다. 학교 서식과 색상은 내려받은 뒤 직접 맞춥니다."]},
+ {id:"info",ex:"info",where:"스튜디오 › 인포그래픽 › 맞춤설정",title:"인포그래픽",when:"교실 게시물, 가정통신문 첨부, 단원 한 장 정리",
+  tpl:"소스의 {단원} 핵심 내용을 교실 게시용 인포그래픽 한 장으로 만들어 줘. {학년}이 보는 자료이니 항목은 {개수=5}개 이내로 줄이고, 한눈에 보이는 흐름도 형태로 구성해 줘.",
+  refine:[["그림 위주","글자를 줄이고 그림 위주로 바꿔 줘."]],
+  note:["유의","숫자와 명칭이 잘못 표기되는 경우가 있습니다. 게시 전에 수치·연도·기관명을 확인하세요."],warn:true},
+ {id:"report",ex:"report",where:"스튜디오 › 보고서 › 맞춤설정",title:"보고서 · 학습 가이드",when:"학생 배부용 학습지, 업무·회의 요약, 학부모 안내문",
+  tpl:"{학년}용 {단원} 학습 가이드를 만들어 줘. 핵심 개념 정리, 확인 문제 {개수=5}개, 오개념 주의사항 순서로 구성해 줘.",
+  refine:[["학부모 안내문","학부모가 읽을 안내문으로 바꿔 줘. 자주 묻는 질문 형식으로 8개 항목, 각 답변은 세 문장 이내로 써 줘."]],
+  note:["참고","점 3개 메뉴 → 'Docs로 내보내기'. 표가 있는 보고서는 'Sheets로 내보내기'를 고르면 표마다 탭이 나뉩니다. 내보낸 파일에서 고친 내용은 원본에 반영되지 않습니다."]}
+ ]},
+{id:"s3",no:"3",title:"수업 설계와 평가",desc:"채팅창에서 쓰는 긴 프롬프트입니다. 결과가 마음에 들면 메모로 저장해 다음 작업의 소스로 씁니다.",
+ cards:[
+ {id:"plan",where:"채팅",title:"교수·학습 및 평가 운영 계획서",when:"학기 초 계획서를 학교 양식에 맞춰 초안으로 만들 때",
+  files:["교수·학습 및 평가 운영 계획 샘플","교과서 해당 단원 PDF"],
+  tpl:"너는 경력 10년 이상의 중학교 {교과} 교사야. {시기=4월}에 {단원}을 수업하려고 해. 소스로 올린 교수·학습 및 평가 운영 계획 샘플의 양식과 항목 순서를 그대로 따라 이 단원의 계획서를 작성해 줘. 성취기준, 차시별 교수·학습 활동, 평가 방법과 시기, 유의사항을 포함하고, 소스에서 확인할 수 없는 내용은 '확인 필요'로 표시해 줘.",
+  note:["참고","샘플 계획서와 교과서 단원, 두 소스만 체크하고 실행하세요."]},
+ {id:"hook",where:"채팅  →  스튜디오 › 오디오 개요",title:"동기유발 오디오 대본",when:"수업 첫 5분에 들려줄 흥미 유발용 대화를 직접 설계할 때",
+  tpl:"{단원}을 주제로 두 진행자가 대화하는 오디오 개요용 대본을 써 줘.\n- 톤: {학년}이 듣기에 친근하고 유머러스하게\n- 도입: 일상에서 이 주제와 관련된 궁금증 하나로 시작 (예: {궁금증=소금은 왜 물에 잘 녹을까?})\n- 전개: 어려운 용어는 쉬운 비유로 설명\n- 길이: {분량=3~5}분 분량의 대화문",
+  note:["참고","완성된 대본을 메모로 저장해 소스로 추가한 뒤, 오디오 개요 맞춤설정에 '이 대본의 흐름대로 만들어 줘'라고 넣으세요."]},
+ {id:"webtoon",where:"채팅  →  스튜디오 › 슬라이드 자료",title:"웹툰형 슬라이드",when:"추상적인 원리를 장면으로 보여 주고 싶을 때",
+  tpl:"{핵심 원리=세포의 구조}의 핵심 원리를 {컷 수=4~6}컷 웹툰 시나리오로 짜 줘.\n- 각 컷마다 [캐릭터 대사 / 상황 설명 / 화면 구성 묘사]를 구분해서 쓸 것\n- 원리가 그림으로 잘 드러나게 할 것 (예: 보일의 법칙을 풍선 속 기체 분자가 벽을 치는 모습으로 표현)\n- 마지막에 각 장면을 이미지 생성 AI로 그릴 수 있도록 영어 이미지 생성 프롬프트를 표로 정리할 것",
+  note:["참고","결과를 슬라이드 자료 맞춤설정에 붙여 넣으면 웹툰 형태의 슬라이드가 됩니다. 틀린 장면은 다시 생성할 수 있습니다."]},
+ {id:"formative",where:"채팅",title:"형성평가 10문항",when:"단원 핵심 개념을 확인하는 평가 문항 초안이 필요할 때",
+  tpl:"{단원}의 핵심 개념을 확인하는 형성평가 {개수=10}문항을 만들어 줘.\n- 절반은 5지선다형, 절반은 초성퀴즈(예: ㄱㅎㅅ → 광합성)\n- 난이도는 하 {하=3}, 중 {중=5}, 상 {상=2}문항\n- 문항마다 상세한 해설 포함\n- 형식: [질문 / 보기 1~5 / 정답 / 해설] (초성퀴즈는 보기 대신 초성 힌트)",
+  note:["참고","이 결과를 4단계 '구글 설문 자동 채점'에서 그대로 이어 씁니다. 난이도 문항 수의 합이 전체 문항 수와 같은지 확인하세요."]},
+ {id:"slow",where:"채팅  →  스튜디오 › 동영상 개요",title:"느린 학습자 복습 영상",when:"성취도가 낮은 학생에게 핵심만 반복해 줄 짧은 영상이 필요할 때",
+  tpl:"성취도가 낮은 학생을 위해 {주제=이 단원의 핵심 개념 하나}만 담은 {분량=3}분 복습 영상 스크립트를 써 줘.\n- 핵심 용어 최소화: 가장 중요한 키워드 2~3개만 반복해서 강조\n- 시각화 중심: '여기서 화면에 큰 화살표가 나타남'처럼 구체적인 화면 지시어 포함\n- 말투: '괜찮아, 이것만 알면 돼!' 같은 격려하는 톤\n- 마지막: 아주 쉬운 O/X 퀴즈 하나로 성공 경험 주기",
+  note:["참고","스크립트를 동영상 개요 맞춤설정에 붙여 넣어 영상으로 만듭니다."]}
+ ]},
+{id:"s4",no:"4",title:"다른 도구와 연결",desc:"노트북에서 만든 결과를 구글 설문, 퀴즈앤, 캔버스로 넘깁니다.",
+ cards:[
+ {id:"forms",where:"채팅 (형성평가에 이어서)  →  Apps Script",title:"구글 설문 자동 채점",when:"형성평가를 과제로 내고, 제출 즉시 점수를 보여 주고 싶을 때",
+  tpl:"위 형성평가 문항으로 구글 설문 퀴즈를 만드는 Apps Script 코드를 작성해 줘.\n- 설문 제목은 '{단원} 형성평가'\n- 퀴즈 모드로 설정하고 문항마다 정답과 배점 {배점=10}점 지정\n- 학생이 제출하면 바로 점수, 틀린 문항, 정답을 확인할 수 있게 설정\n- 응답을 새 스프레드시트에 연결\n- 실행이 끝나면 설문 편집 링크와 응답 링크를 로그에 출력",
+  refine:[["초성퀴즈 채점","초성퀴즈가 자동 채점되지 않으면, 초성퀴즈도 보기 4개짜리 객관식으로 바꿔서 코드를 다시 작성해 줘."],["오류가 날 때","실행했더니 아래 오류가 나와. 원인을 설명하고 고친 전체 코드를 다시 줘.\n(오류 메시지 붙여넣기)"]],
+  steps:["구글 드라이브 → 새로 만들기 → 더보기 → Google Apps Script","기본 코드를 지우고 복사한 코드 붙여넣기","프로젝트 이름을 정하고 저장","실행 → 권한 검토 → 계정 선택 → 허용","실행 로그에 나온 링크를 열어 설문 확인","응답 링크를 구글 클래스룸 등에 과제로 올리기"]},
+ {id:"quizn",where:"Gemini 앱 (노트북 불러오기)  →  퀴즈앤 Show",title:"퀴즈앤 문제 만들기",when:"수업 중 실시간 퀴즈 게임으로 복습하고 싶을 때",
+  files:["퀴즈앤 문제 형식 캡처 이미지"],
+  tpl:"{단원} 관련 문제 {개수=10}개를 퀴즈앤 Show용으로 출제해 줘. 첨부한 퀴즈앤 문제 형식 이미지의 열 구성을 그대로 따라 표로 작성해서 구글 시트에 바로 붙여 넣을 수 있게 해 줘. 문제 유형은 {유형=선택형과 OX형}을 섞어 줘.",
+  steps:["Gemini 앱 입력창의 + 버튼으로 노트북을 불러오고 형식 이미지를 첨부","결과 표를 메모로 저장한 뒤 시트로 변환 (또는 표를 복사해 구글 시트에 붙여넣기)","퀴즈앤에서 Show 만들기 → 시트의 문제를 옮겨 3문제 이상 등록"]},
+ {id:"sim",ex:"sim",where:"Gemini 앱 › 캔버스",title:"수업용 시뮬레이터",when:"학생이 값을 바꿔 보며 원리를 확인하는 웹앱이 필요할 때",
+  tpl:"너는 유능한 웹 개발자야. {학년} {교과} 수업을 위한 {시뮬레이션=자유낙하} 시뮬레이션을 만들어 줘.\n- HTML, CSS, JS가 모두 들어간 단일 HTML 파일로 작성\n- {조절할 값=높이와 중력}을 조절하는 슬라이더를 넣고, 결과를 실시간으로 움직이는 화면으로 보여 줄 것\n- 화면의 글자는 모두 한국어로",
+  refine:[["디자인","배경을 모눈종이로 바꾸고, 움직이는 물체의 궤적을 남겨 줘."],["속도","움직임이 너무 빨라. 0.5배속으로 천천히 보여 줘."],["표시","최댓값을 화면에 숫자로 표시해 줘."],["오류","버튼을 눌러도 반응이 없어. 코드를 다시 점검해서 고쳐 줘. (오류 메시지가 있으면 함께 붙여넣기)"]]}
+ ]},
+{id:"s5",no:"5",title:"프롬프트 직접 만들기",desc:"원하는 산출물이 위에 없을 때, 제미나이에게 노트북용 프롬프트를 대신 짜 달라고 합니다.",
+ cards:[
+ {id:"meta",where:"Gemini 앱 (일반 채팅)",title:"노트북용 프롬프트 생성기",when:"상황만 적으면 역할·배경·지시·제약·형식을 갖춘 프롬프트가 나옵니다",
+  tpl:"[상황/목적] {상황/목적=중학생 대상 태양계 학습용 교구 제작}\n\n당신은 구글 노트북(NotebookLM)의 활용을 극대화하는 프롬프트 엔지니어입니다. 위 [상황/목적]을 분석하여, 노트북에 그대로 붙여 넣었을 때 가장 정확한 결과를 얻을 수 있는 맞춤형 프롬프트를 작성해 주세요.\n\n노트북은 사용자가 올린 소스 문서를 바탕으로 답변하는 도구이므로, 프롬프트에는 다음 5가지를 반드시 포함해 주세요.\n1. 역할: 노트북이 맡을 구체적인 전문가 역할\n2. 배경과 목적: 올린 문서가 무엇이고 이 작업이 왜 필요한지\n3. 핵심 지시: 문서에서 어떤 정보를 뽑아 어떻게 가공할지 단계별로\n4. 제약 조건\n   - 올린 소스 문서의 내용만 근거로 답할 것\n   - 전문 용어는 쉽게 풀고 문장은 간결하게 쓸 것\n   - 문서에서 확인할 수 없는 내용은 지어내지 말고 '문서에서 확인할 수 없음'으로 쓸 것\n5. 출력 형식: 표, 글머리 기호 등 읽기 편한 형태\n\n최종 결과는 바로 복사해 쓸 수 있도록 완성된 프롬프트만 깔끔하게 보여 주세요.",
+  note:["참고","나온 프롬프트를 노트북 채팅창이나 스튜디오 맞춤설정에 붙여 넣으세요."]}
+ ]}
+];
+
+/* ---------- 상태 ---------- */
+const KEY="gnb-prompts-v1";
+let st={g:{학년:"중학교 2학년",교과:"과학",단원:"물질의 구성"},loc:{},edit:{},done:{}};
+try{const s=JSON.parse(localStorage.getItem(KEY)||"null");if(s&&s.g){st=Object.assign(st,s);}}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){}}
+
+const TOK=/\{([^{}=]+?)(?:=([^{}]*))?\}/g;
+const isG=k=>GLOBALS.includes(k);
+function val(card,k,def){
+  if(isG(k)) return st.g[k]||"";
+  const l=st.loc[card]; return (l&&k in l)?l[k]:(def||"");
+}
+function assemble(c){
+  if(st.edit[c.id]!=null) return st.edit[c.id];
+  return c.tpl.replace(TOK,(m,k,d)=>{const v=val(c.id,k,d).trim();return v||("["+k+"]");});
+}
+function subj(){
+  const s=(st.g.교과||"").replace(/\s/g,"");
+  for(const [n,gk] of SUBJECTS){ if(s && (s===n.replace(/\s/g,"")||s.includes(n.split("·")[0]))) return [n,gk]; }
+  return null;
+}
+function group(){ const r=subj(); return r?r[1]:null; }
+const esc=s=>s.replace(/[&<>"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
+
+/* ---------- 렌더 ---------- */
+const main=document.getElementById("main");
+function promptHTML(c){
+  let out="",last=0;
+  c.tpl.replace(TOK,(m,k,d,i)=>{
+    out+=esc(c.tpl.slice(last,i));
+    const g=isG(k);
+    out+='<span class="slot" contenteditable="true" spellcheck="false" role="textbox" aria-label="'+esc(k)+'" data-key="'+esc(k)+'"'+(g?' data-global="'+esc(k)+'"':'')+' data-card="'+c.id+'">'+esc(val(c.id,k,d))+'</span>';
+    last=i+m.length; return m;
+  });
+  return out+esc(c.tpl.slice(last));
+}
+function cardHTML(c){
+  const edited=st.edit[c.id]!=null;
+  let h='<article class="card'+(st.done[c.id]?' done':'')+'" id="'+c.id+'" data-id="'+c.id+'">';
+  h+='<div class="card-top"><div><div class="where">'+esc(c.where)+'</div><h3>'+esc(c.title)+'</h3></div>';
+  h+='<label class="donebox"><input type="checkbox" id="done-'+c.id+'" data-done="'+c.id+'"'+(st.done[c.id]?' checked':'')+'>완료</label></div>';
+  if(c.when) h+='<p class="when">'+esc(c.when)+'</p>';
+  if(c.files) h+='<div class="files"><b>체크할 소스</b>'+c.files.map(f=>'<span>'+esc(f)+'</span>').join("")+'</div>';
+  h+='<div class="prompt" data-view'+(edited?' hidden':'')+'>'+promptHTML(c)+'</div>';
+  h+='<textarea class="edit" id="edit-'+c.id+'" aria-label="'+esc(c.title)+' 프롬프트 직접 고치기"'+(edited?'':' hidden')+'>'+(edited?esc(st.edit[c.id]):'')+'</textarea>';
+  h+='<div class="actions"><button class="btn primary" type="button" data-copy="'+c.id+'">프롬프트 복사</button>';
+  h+='<button class="btn" type="button" data-editbtn="'+c.id+'"'+(edited?' hidden':'')+'>문장 직접 고치기</button>';
+  h+='<button class="btn" type="button" data-revert="'+c.id+'"'+(edited?'':' hidden')+'>원래 문장으로</button>';
+  h+='<span class="edited"'+(edited?'':' hidden')+'>직접 고친 문장 사용 중</span></div>';
+  if(c.ex) h+='<details class="exbox" data-ex="'+c.ex+'"><summary></summary><ul class="sub-list"><li><p></p><button class="mini" type="button" data-copyex="'+c.ex+'">복사</button></li></ul></details>';
+  if(c.refine) h+='<details><summary>결과를 다듬는 후속 프롬프트 '+c.refine.length+'개</summary><ul class="sub-list">'+c.refine.map(r=>'<li><p><small>'+esc(r[0])+'</small>'+esc(r[1])+'</p><button class="mini" type="button" data-copytext="'+esc(r[1])+'">복사</button></li>').join("")+'</ul></details>';
+  if(c.steps) h+='<details><summary>진행 순서</summary><ol class="steps">'+c.steps.map(s=>'<li>'+esc(s)+'</li>').join("")+'</ol></details>';
+  if(c.note) h+='<p class="note'+(c.warn?' warn':'')+'"><b>'+esc(c.note[0])+'</b>'+esc(c.note[1])+'</p>';
+  return h+'</article>';
+}
+function renderAll(){
+let html="";
+STAGES.forEach(s=>{
+  html+='<section class="stage" id="'+s.id+'"><div class="stage-head"><span class="stage-no">STEP '+s.no+'</span><h2>'+esc(s.title)+'</h2><p>'+esc(s.desc)+'</p></div>';
+  if(s.tips) html+='<div class="tips">'+s.tips.map(t=>'<div>'+t+'</div>').join("")+'</div>';
+  html+='<div class="cards">'+s.cards.map(cardHTML).join("")+'</div></section>';
+});
+main.innerHTML=html;
+}
+renderAll();
+document.getElementById("nav").innerHTML=STAGES.map(s=>'<a href="#'+s.id+'"><b>'+s.no+'</b>'+esc(s.title)+'</a>').join("");
+const ALL=STAGES.flatMap(s=>s.cards); const BYID={}; ALL.forEach(c=>BYID[c.id]=c);
+
+/* chips */
+const chips=document.getElementById("chips");
+chips.innerHTML=SUBJECTS.map(([n])=>'<button class="chip" type="button" data-sub="'+n+'">'+n+'</button>').join("");
+
+function refreshMeta(){
+  const g=group();
+  chips.querySelectorAll(".chip").forEach(b=>b.setAttribute("aria-pressed",String((st.g.교과||"").trim()===b.dataset.sub)));
+  document.querySelectorAll(".exbox").forEach(d=>{
+    const set=EX[d.dataset.ex]; const gk=g||"sci";
+    d.querySelector("summary").textContent=(g?GROUP_NAME[gk]:"교과를 고르면 바뀜 · 과학")+" 예시 프롬프트";
+    d.querySelector("p").textContent=set[gk];
+    d.querySelector("[data-copyex]").dataset.group=gk;
+  });
+  renderUnits();
+  const ctx=[st.g.학년,st.g.교과,st.g.단원].filter(Boolean).join(" · ");
+  document.getElementById("ctx").textContent=ctx||"내 수업 정보를 입력하세요";
+  const n=ALL.filter(c=>st.done[c.id]).length;
+  document.getElementById("prog").textContent="완료 "+n+" / "+ALL.length;
+}
+function syncGlobal(k,v,except){
+  document.querySelectorAll('[data-global="'+k+'"]').forEach(el=>{
+    if(el===except) return;
+    if(el.tagName==="INPUT"||el.tagName==="SELECT") el.value=v; else el.textContent=v;
+  });
+}
+const pick=document.getElementById("g-unit-pick"), unote=document.getElementById("unit-note");
+let unitKey="";
+function renderUnits(){
+  const r=subj(), gm=(st.g.학년||"").match(/([123])\s*학년/), gr=gm?gm[1]:"";
+  const key=(r?r[0]:"")+"|"+gr;
+  if(key!==unitKey){
+    unitKey=key;
+    const u=r?UNITS[r[0]]:null, groups=u?(u.all||u[gr]):null;
+    let o;
+    if(!r){ o='<option value="">교과를 먼저 고르세요</option>'; unote.textContent=""; }
+    else if(!groups){ o='<option value="">학년을 먼저 고르세요</option>'; unote.textContent=""; }
+    else{
+      o='<option value="">'+(u.kind==="unit"?"단원 고르기":"영역·주제 고르기")+'</option>'+groups.map(([label,items])=>'<optgroup label="'+esc(label)+'">'+items.map(it=>'<option value="'+esc(it)+'">'+esc(it)+'</option>').join("")+'</optgroup>').join("");
+      unote.textContent=(gr==="3"&&u.note3)?u.note3:KIND_NOTE[u.kind];
+    }
+    pick.innerHTML=o;
+  }
+  const v=(st.g.단원||"").trim();
+  pick.value=[...pick.options].some(op=>op.value===v)?v:"";
+}
+pick.addEventListener("change",()=>{
+  if(!pick.value) return;
+  st.g.단원=pick.value; syncGlobal("단원",pick.value); refreshMeta(); save();
+});
+GLOBALS.forEach(k=>syncGlobal(k,st.g[k]||""));
+refreshMeta();
+
+/* ---------- 이벤트 ---------- */
+document.querySelectorAll(".fields [data-global]").forEach(inp=>{
+  inp.addEventListener(inp.tagName==="SELECT"?"change":"input",()=>{const k=inp.dataset.global;st.g[k]=inp.value;syncGlobal(k,inp.value,inp);refreshMeta();save();});
+});
+chips.addEventListener("click",e=>{
+  const b=e.target.closest(".chip"); if(!b) return;
+  st.g.교과=b.dataset.sub; syncGlobal("교과",b.dataset.sub); refreshMeta(); save();
+});
+main.addEventListener("input",e=>{
+  const t=e.target;
+  if(t.classList.contains("slot")){
+    const v=t.textContent.replace(/\n/g," ");
+    if(t.dataset.global){const k=t.dataset.global;st.g[k]=v;syncGlobal(k,v,t);refreshMeta();}
+    else{(st.loc[t.dataset.card]=st.loc[t.dataset.card]||{})[t.dataset.key]=v;}
+    save();
+  } else if(t.classList.contains("edit")){
+    st.edit[t.id.slice(5)]=t.value; save();
+  }
+});
+main.addEventListener("keydown",e=>{ if(e.target.classList.contains("slot")&&e.key==="Enter"){e.preventDefault();e.target.blur();} });
+main.addEventListener("paste",e=>{
+  if(!e.target.classList||!e.target.classList.contains("slot")) return;
+  e.preventDefault();
+  const text=(e.clipboardData||window.clipboardData).getData("text").replace(/\s*\n\s*/g," ");
+  document.execCommand("insertText",false,text);
+});
+main.addEventListener("change",e=>{
+  const id=e.target.dataset.done; if(!id) return;
+  st.done[id]=e.target.checked; document.getElementById(id).classList.toggle("done",e.target.checked); refreshMeta(); save();
+});
+main.addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b) return;
+  const d=b.dataset;
+  if(d.copy) copy(assemble(BYID[d.copy]),b);
+  else if(d.copytext) copy(d.copytext,b);
+  else if(d.copyex) copy(EX[d.copyex][d.group],b);
+  else if(d.editbtn) setEdit(d.editbtn,true);
+  else if(d.revert) setEdit(d.revert,false);
+});
+function setEdit(id,on){
+  const card=document.getElementById(id), c=BYID[id], ta=card.querySelector("textarea.edit");
+  if(on){ ta.value=assemble(c); st.edit[id]=ta.value; }
+  else { delete st.edit[id]; }
+  card.querySelector("[data-view]").hidden=on; ta.hidden=!on;
+  card.querySelector("[data-editbtn]").hidden=on; card.querySelector("[data-revert]").hidden=!on; card.querySelector(".edited").hidden=!on;
+  if(on) ta.focus(); save();
+}
+
+/* copy */
+const toast=document.getElementById("toast"); let tt;
+function say(m){toast.textContent=m;toast.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>toast.classList.remove("show"),1800);}
+function copy(text,btn){
+  const done=()=>{say("복사했어요. 노트북에 붙여 넣으세요");if(btn){const o=btn.textContent;btn.textContent="복사됨";setTimeout(()=>btn.textContent=o,1200);}};
+  const fallback=()=>{
+    const ta=document.createElement("textarea");ta.value=text;ta.setAttribute("readonly","");ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();
+    let ok=false;try{ok=document.execCommand("copy");}catch(e){}
+    document.body.removeChild(ta);
+    ok?done():say("복사가 막혀 있어요. 문장 직접 고치기를 눌러 전체 선택 후 복사하세요");
+  };
+  try{ navigator.clipboard.writeText(text).then(done,fallback); }catch(e){ fallback(); }
+}
+
+/* reset */
+const rc=document.getElementById("reset-confirm"), rb=document.getElementById("reset");
+rb.addEventListener("click",()=>{rc.hidden=false;rb.hidden=true;});
+document.getElementById("reset-no").addEventListener("click",()=>{rc.hidden=true;rb.hidden=false;});
+document.getElementById("reset-yes").addEventListener("click",()=>{
+  try{localStorage.removeItem(KEY);}catch(e){}
+  st={g:{학년:"",교과:"",단원:""},loc:{},edit:{},done:{}};
+  renderAll(); GLOBALS.forEach(k=>syncGlobal(k,"")); refreshMeta();
+  rc.hidden=true; rb.hidden=false; say("입력한 내용을 모두 지웠어요");
+});
+})();
+</script>
+
+</body>
+</html>

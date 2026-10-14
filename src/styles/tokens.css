@@ -1,0 +1,66 @@
+/* 색상·글꼴 토큰 (PRD 5.2~5.3) */
+:root {
+  --paper: #f4f6f7;
+  --surface: #ffffff;
+  --ink: #16242b;
+  --muted: #5a6a72;
+  --rule: #d9e0e3;
+  --accent: #0c6873;
+  --accent-ink: #ffffff;
+  --accent-soft: #e0eff0;
+  --mark: #ffe36e;
+  --mark-ink: #16242b;
+  --warn: #9a4a12;
+  --warn-soft: #fbede2;
+  --ok: #2f7a3e;
+
+  --font-serif: "Gowun Batang", "Nanum Myeongjo", serif;
+  --font-sans: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  --radius: 10px;
+  --gutter: 20px;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0f1719;
+    --surface: #162124;
+    --ink: #e4ecee;
+    --muted: #97a8ae;
+    --rule: #2a383c;
+    --accent: #5cc3cc;
+    --accent-ink: #0f1719;
+    --accent-soft: #1b3236;
+    --mark: #5a4c12;
+    --mark-ink: #fff0b0;
+    --warn: #f2a877;
+    --warn-soft: #33241a;
+    --ok: #7ccb8a;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --paper: #0f1719;
+  --surface: #162124;
+  --ink: #e4ecee;
+  --muted: #97a8ae;
+  --rule: #2a383c;
+  --accent: #5cc3cc;
+  --accent-ink: #0f1719;
+  --accent-soft: #1b3236;
+  --mark: #5a4c12;
+  --mark-ink: #fff0b0;
+  --warn: #f2a877;
+  --warn-soft: #33241a;
+  --ok: #7ccb8a;
+  color-scheme: dark;
+}
+
+@media (max-width: 640px) {
+  :root {
+    --gutter: 16px;
+  }
+}
