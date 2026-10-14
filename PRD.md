@@ -1,7 +1,8 @@
 # PRD — 제미나이 노트북 실습 프롬프트 웹앱 (lmprompt)
 
 > Claude Code가 이 웹앱을 만들거나 고칠 때 기준으로 삼는 문서임.
-> 이 문서 하나만으로 웹앱을 처음부터 다시 만들 수 있도록 화면 규칙, 동작, 데이터 원문(부록 A~D)을 모두 담았음.
+> v1은 `index.html` 한 파일로 만든 시제품이며, v2는 이 문서를 기준으로 **Vite + React 다중 파일 웹앱**으로 다시 만듦(7·11절).
+> 화면 규칙, 동작, 데이터 원문(부록 A~D)을 모두 담았으므로 이 문서만으로 처음부터 만들 수 있음.
 > 기능을 바꾸면 이 문서의 해당 절과 부록도 함께 고칠 것.
 
 | 항목 | 내용 |
@@ -9,7 +10,7 @@
 | 서비스 주소 | https://lmprompt.vercel.app |
 | 저장소 | https://github.com/Parkhorim/lmprompt (`main`) |
 | 배포 | Vercel 프로젝트 `lmprompt` (팀 `parkhorim's projects`) |
-| 작성·운영 | 박찬우(호림샘), 무안북중학교 정보교사 |
+| 작성·운영 | 박호림(호림샘), 문태고등학교 교사 |
 | 사용처 | 2026 학교로 찾아가는 에듀테크 수업 역량 강화 연수 · 목포여자중학교 (2026.10.14.) |
 | 문서 기준일 | 2026-10-14 |
 
@@ -45,6 +46,7 @@
 | 10.13 | 학년 선택 방식 변경(직접 입력 → 선택 상자), 학년·교과별 단원 목록 추가 |
 | 10.14 | GitHub 저장소 `Parkhorim/lmprompt` 생성 및 업로드, PRD 작성 |
 | 10.14 | 상단 연수명에 `목포여자중학교` 표기 |
+| 10.14 | 단일 파일(v1)에서 Vite + React 다중 파일 웹앱(v2)으로 전환하기로 결정, PRD 개편 |
 
 ### 1.5 원본 대비 바꾼 판단과 이유
 - **Apps Script 초성퀴즈 채점**: Apps Script로 단답형 자동 채점이 안 될 수 있어, 객관식으로 바꿔 달라는 후속 프롬프트를 함께 둠
@@ -218,31 +220,119 @@ st = {
 
 ---
 
-## 7. 기술 제약
-- **빌드 없음**: `index.html` 한 파일(HTML·CSS·JS·데이터)로 동작. 프레임워크·번들러·npm 의존성 추가 금지
-- 외부 리소스는 구글 폰트만. 인터넷이 끊겨도 기능은 동작(글꼴만 대체)
-- `alert()`·`confirm()`·`prompt()` 사용 금지
-- `localStorage`는 항상 try/catch
-- 사용자 입력이 들어가는 HTML은 이스케이프(`& < > "`). 단계 안내(`tips`)만 고정 문구에 한해 HTML 허용
-- 카드 `id`는 저장 키이므로 바꾸지 않음. 새 카드는 새 id로 추가
-- 지원 브라우저: 최신 크롬·엣지·웨일·사파리(`color-mix()`, `:focus-visible`, `text-wrap: balance` 사용)
+## 7. 기술 구조 (v2)
 
-### 7.1 코드 구성(현재 `index.html` 기준, 검색어로 찾기)
-- `/* ---------- 학년·교과별 단원 ---------- */` — `UNITS`, `KIND_NOTE`
-- `/* ---------- 교과별 예시 ---------- */` — `EX`
-- `/* ---------- 실습 단계와 프롬프트 ---------- */` — `STAGES`
-- `/* ---------- 상태 ---------- */` — 저장, 템플릿 조립(`assemble`), 교과 판별(`subj`)
-- `/* ---------- 렌더 ---------- */` — 카드 생성, `refreshMeta`, `renderUnits`
-- `/* ---------- 이벤트 ---------- */` — 입력·복사·편집·완료·초기화
+### 7.1 기술 선택
+| 항목 | 선택 | 이유 |
+|---|---|---|
+| 빌드 도구 | Vite | 설정이 단순하고 Vercel이 자동 인식함 |
+| UI | React 18 (JavaScript, JSX) | 카드·슬롯 같은 반복 부품을 컴포넌트로 나누기 쉬움. TypeScript는 쓰지 않음(교사가 직접 고치기 쉽게) |
+| 스타일 | 일반 CSS 파일 + CSS 변수(5.3절) | 추가 라이브러리 없이 라이트·다크 대응 |
+| 데이터 | `src/data/*.json` | 프롬프트 문구를 코드와 분리해 문구만 고치기 쉽게 |
+| 테스트 | Vitest(로직), Playwright(9절 수용 기준) | |
+| 패키지 | npm | |
+
+- 런타임 의존성은 `react`, `react-dom`만 둠. UI 라이브러리·상태 관리 라이브러리·CSS 프레임워크 추가 금지
+- 서버·API·로그인 없음. 빌드 결과는 정적 파일(`dist/`)
+
+### 7.2 폴더 구조
+```
+lmprompt/
+├─ index.html                 # Vite 진입점(<div id="root">, 폰트 링크, <title>)
+├─ package.json
+├─ vite.config.js
+├─ vercel.json                # Vercel 빌드 설정(8절)
+├─ public/
+│  └─ favicon.svg
+├─ src/
+│  ├─ main.jsx                # React 시작점
+│  ├─ App.jsx                 # 전체 화면 조립, 전역 상태 보관
+│  ├─ styles/
+│  │  ├─ tokens.css           # 색상·글꼴 토큰(5.3절), 다크 모드
+│  │  └─ app.css              # 레이아웃·컴포넌트 스타일
+│  ├─ data/
+│  │  ├─ site.json            # 연수명, 학교명, 날짜, 바닥글 문구
+│  │  ├─ stages.json          # 부록 A (실습 단계·카드)
+│  │  ├─ examples.json        # 부록 B (교과 묶음별 예시)
+│  │  ├─ units.json           # 부록 C (학년·교과별 단원)
+│  │  └─ subjects.json        # 부록 D (교과 버튼·묶음 매핑, 묶음 표시명)
+│  ├─ lib/
+│  │  ├─ template.js          # 템플릿 파싱(parseTemplate), 조립(assemble)
+│  │  ├─ subject.js           # 교과 판별(findSubject), 묶음 찾기
+│  │  ├─ units.js             # 학년·교과로 단원 목록 고르기
+│  │  ├─ storage.js           # localStorage 읽기·쓰기(try/catch), 버전 이전
+│  │  └─ clipboard.js         # 복사 + 대체 경로
+│  ├─ hooks/
+│  │  └─ useAppState.js       # st 상태 + 자동 저장
+│  └─ components/
+│     ├─ Hero.jsx             # 3.1
+│     ├─ SetupPanel.jsx       # 3.2 (GradeSelect, SubjectInput, SubjectChips, UnitPicker 포함)
+│     ├─ StickyBar.jsx        # 3.3
+│     ├─ StageSection.jsx     # 단계 머리말 + 카드 목록
+│     ├─ PromptCard.jsx       # 3.4 카드 한 장
+│     ├─ PromptBody.jsx       # 슬롯이 섞인 본문 / 직접 고치기 textarea
+│     ├─ Slot.jsx             # 노란 빈칸 하나
+│     ├─ ExampleBox.jsx       # 교과별 예시(접이식)
+│     ├─ RefineList.jsx       # 후속 프롬프트(접이식)
+│     ├─ StepsList.jsx        # 진행 순서(접이식)
+│     ├─ Note.jsx             # 참고/유의
+│     ├─ Closing.jsx          # 3.5 하단 안내 + 초기화
+│     └─ Toast.jsx
+├─ tests/
+│  ├─ template.test.js        # Vitest
+│  ├─ subject.test.js
+│  └─ e2e.spec.js             # Playwright, 9절 기준
+├─ legacy/
+│  └─ index.html              # v1 단일 파일(동작 참고용, 배포하지 않음)
+├─ PRD.md
+└─ README.md
+```
+
+### 7.3 데이터 파일 형식
+- `stages.json`: `[{ id, no, title, desc, tips?, cards:[{ id, ex?, where, title, when?, files?, tpl, refine?, steps?, note?, warn? }] }]`
+  - `tpl`의 줄바꿈은 JSON 문자열 `\n`
+  - `tips`는 HTML 대신 `[{ "label":"이름", "text":"…" }]` 형태로 바꿔 굵은 라벨을 컴포넌트에서 그림(HTML 문자열 삽입 금지)
+- `examples.json`: `{ mindmap:{ kor:"…", eng:"…", … }, … }` — 9종 × 8묶음 모두 채울 것
+- `units.json`: `{ "수학":{ kind:"unit", byGrade:{ "1":[{label,items}], … }, note3:"…" }, "사회":{ kind:"unit", all:[{label,items}] }, … }`
+- `subjects.json`: `{ subjects:[{ name:"국어", group:"kor" }, …], groups:{ kor:"국어", … }, kindNote:{ unit:"…", area:"…", topic:"…" }, fallbackGroup:"sci" }`
+- `site.json`: `{ eyebrow:"2026 학교로 찾아가는 에듀테크 수업 역량 강화 연수", school:"목포여자중학교", title:"제미나이 노트북 실습 프롬프트", lead:"…", footer:"…", defaults:{ 학년:"중학교 2학년", 교과:"과학", 단원:"물질의 구성" } }`
+  - 다른 학교 연수에 쓸 때는 `school`만 바꾸면 되도록 함
+
+### 7.4 구현 규칙
+- `alert()`·`confirm()`·`prompt()` 사용 금지 — 화면 안 확인 UI 사용
+- `localStorage`는 `storage.js`에서만 다루고 항상 try/catch. 키 `gnb-prompts-v1`(v1과 같은 키·구조를 유지해 연수 참가자 저장값을 이어받음)
+- `dangerouslySetInnerHTML` 사용 금지
+- **Slot 구현**: React가 관리하는 `contentEditable`은 커서가 튀므로 아래 중 하나로 구현
+  - (권장) 내용 폭에 맞춰 늘어나는 `<input>`(숨은 span으로 폭 측정), 노란 형광펜 스타일 적용
+  - 또는 `contentEditable` + `suppressContentEditableWarning`, 값은 `onInput`으로만 읽고 포커스 중에는 외부 값으로 덮어쓰지 않음
+- 전역 슬롯 값은 `App` 상태 한 곳에 두고 설정 패널·모든 카드가 같은 값을 씀
+- 카드 `id`는 저장 키이므로 바꾸지 않음. 새 카드는 새 id로 추가
+- 외부 리소스는 구글 폰트만. 인터넷이 끊겨도 기능은 동작(글꼴만 대체)
+- 접근성: 모든 입력에 라벨, 키보드로 전 기능 사용 가능, 포커스 표시 유지, `prefers-reduced-motion` 존중
+
+### 7.5 v1 코드 참고
+- `legacy/index.html`이 모든 동작의 기준 구현임. 동작이 애매하면 v1과 같게 맞춤
+- v1 안 데이터 위치: `/* ---------- 학년·교과별 단원 ---------- */`(UNITS), `/* ---------- 교과별 예시 ---------- */`(EX), `/* ---------- 실습 단계와 프롬프트 ---------- */`(STAGES)
 
 ---
 
 ## 8. 배포
-- Vercel 정적 배포: 프레임워크 없음(Other), 빌드 명령 없음, 출력 디렉터리는 저장소 루트
 - 참가자에게는 `https://lmprompt.vercel.app`만 안내. 팀 주소(`lmprompt-parkhorims-projects.vercel.app` 등)는 Vercel 로그인 보호가 걸려 있어 열리지 않음
-- **현재 상태**: Vercel 프로젝트와 GitHub 저장소가 아직 자동 연결되지 않음
-  - Vercel 대시보드 → `lmprompt` → Settings → Git → Connect Git Repository → `Parkhorim/lmprompt` 선택
-  - 연결 후에는 `main`에 푸시할 때마다 자동 배포됨
+- v2 빌드 설정은 저장소의 `vercel.json`으로 고정함
+```json
+{
+  "framework": "vite",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist"
+}
+```
+- **현재 상태**: Vercel 프로젝트는 v1(빌드 없음) 설정이고, GitHub 저장소와 자동 연결이 안 되어 있음
+  1. Vercel 대시보드 → `lmprompt` → Settings → Git → Connect Git Repository → `Parkhorim/lmprompt`
+  2. 연결 후 `main`에 푸시하면 자동 배포됨
+- **전환 순서**(사이트가 끊기지 않게)
+  1. v2는 `v2` 브랜치에서 개발 → Vercel 미리보기 주소로 확인
+  2. 9절 수용 기준 통과 후 `main`에 병합 → 운영 주소 자동 반영
+  3. 문제가 생기면 Vercel 대시보드에서 직전 배포로 되돌림(Instant Rollback)
 
 ---
 
@@ -260,49 +350,54 @@ st = {
 11. 390px 폭에서 가로 스크롤 없음, 라이트·다크 모두 글자가 읽힘
 12. 개발자 도구 콘솔 오류 없음
 
-확인 방법: `index.html`을 브라우저로 열거나 `npx serve .` 후 점검. Playwright를 쓸 수 있으면 2·3·4·7번을 자동 테스트로 만듦
+확인 방법: `npm run dev`로 띄워 점검, `npm test`(Vitest)와 `npx playwright test`(2·3·4·5·7·9·10번)를 통과해야 함. `npm run build` 후 `npm run preview`로 빌드 결과도 확인
 
 ---
 
 ## 10. 남은 과제 (우선순위순)
 | 순위 | 과제 | 내용 |
 |---|---|---|
+| P0 | v2 전환 | 7절 구조로 Vite + React 웹앱 구현, v1과 동작 일치 확인 후 배포 |
 | P0 | Vercel–GitHub 연결 | 8절 절차로 자동 배포 연결 |
 | P1 | 기술·가정 단원 확정 | 2022 개정 중학교 기술·가정 영역·단원명 확인 후 `kind:"unit"`/`"area"`로 교체 |
 | P1 | 진로·보건 목록 확정 | 학교 사용 교재 기준 단원으로 교체 |
 | P1 | 2027학년도 대비 | 중3 수학·과학을 2022 개정 단원으로 교체, 2015 안내 제거 |
-| P2 | 연수 학교명 설정 | 다른 학교 연수에서도 쓰도록 상단 학교명을 상수 한 곳(`SCHOOL`)에서 관리 |
 | P2 | 학년별 예시 프롬프트 | 예시를 교과 묶음 + 학년 단위로 세분화 |
 | P2 | 카드 검색 | 산출물 이름으로 카드 찾기 |
 | P2 | 강사 모드 | 큰 글씨, 단계별 한 화면 보기(프로젝터용) |
-| P3 | 파일 분리 | `index.html` + `data.js`(STAGES·EX·UNITS) + `app.js`. 빌드 없는 구조 유지 |
 | P3 | 인쇄용 보기 | 선택한 카드만 A4로 출력 |
 
 ---
 
 ## 11. Claude Code 작업 안내
 
-### 11.1 처음부터 다시 만들 때
-아래처럼 요청하면 됨:
+### 11.1 v2를 처음 만들 때
+Claude Code에 아래처럼 요청함:
 ```text
-PRD.md를 읽고 index.html 한 파일로 웹앱을 만들어 줘.
-- 3~5절의 화면·동작·디자인 규칙을 따를 것
-- 부록 A~D의 데이터는 문구를 바꾸지 말고 그대로 STAGES, EX, UNITS, SUBJECTS 상수로 옮길 것
-- 다 만들면 9절 수용 기준을 하나씩 확인하고 결과를 알려 줄 것
+PRD.md를 읽고 v2 웹앱을 만들어 줘.
+1. v2 브랜치를 만들고, 지금 루트의 index.html을 legacy/index.html로 옮겨 줘.
+2. 7절 구조대로 Vite + React(JavaScript) 프로젝트를 만들어 줘. 의존성은 react, react-dom과 개발용 vite, vitest, playwright만 써.
+3. 부록 A~D와 legacy/index.html의 데이터를 7.3절 형식의 JSON 파일로 옮겨 줘. 문구는 한 글자도 바꾸지 마.
+4. 3~6절의 화면·동작·디자인 규칙대로 컴포넌트를 만들어 줘. 애매하면 legacy/index.html과 똑같이 동작하게 해.
+5. vercel.json을 8절대로 넣어 줘.
+6. 9절 수용 기준을 테스트로 만들어 돌리고, 통과 여부를 항목별로 알려 줘.
 ```
+- 한 번에 다 맡기기보다 1~3단계(구조·데이터) → 4단계(화면) → 5~6단계(배포·검증)로 나눠 요청하면 결과를 확인하기 쉬움
 
-### 11.2 기존 코드를 고칠 때
-- 문구·프롬프트 수정 → 해당 데이터 상수만 수정하고 부록도 같이 고침
-- 기능 추가 → 10절 과제 번호를 말하고 요청(예: "P2 카드 검색 기능 추가해 줘")
-- 고친 뒤 9절 수용 기준 확인 → 커밋 → `main` 푸시
+### 11.2 v2를 고칠 때
+- 프롬프트·예시·단원 문구 수정 → `src/data/*.json`만 고치고 PRD 부록도 함께 고침
+- 학교명 변경 → `src/data/site.json`의 `school`만 수정
+- 기능 추가 → 10절 과제 이름으로 요청(예: "P2 카드 검색 기능 추가해 줘")
+- 고친 뒤 `npm test`, `npx playwright test`, `npm run build` 통과 → 커밋 → 푸시
 
-### 11.3 파일 구성
-```
-lmprompt/
-├─ index.html   # 앱 전체
-├─ README.md    # 저장소 소개
-└─ PRD.md       # 이 문서
-```
+### 11.3 자주 쓰는 명령
+| 명령 | 용도 |
+|---|---|
+| `npm install` | 처음 한 번 패키지 설치 |
+| `npm run dev` | 개발 서버(브라우저에서 확인) |
+| `npm test` | 로직 테스트(Vitest) |
+| `npx playwright test` | 화면 동작 테스트 |
+| `npm run build` / `npm run preview` | 배포용 빌드와 확인 |
 
 ---
 
